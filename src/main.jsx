@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import { AuthProvider } from './contexts/AuthContext'
-import './styles.css'
+import './styles.scss'
 import { makeServer } from './services/mirage'
 
 if (import.meta.env.DEV) {

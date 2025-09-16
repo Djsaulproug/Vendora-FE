@@ -8,13 +8,16 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:watch": "vitest --watch",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "build:css": "sass src/styles.scss dist/styles.css --style=compressed",
+    "watch:css": "sass --watch src/styles.scss:dist/styles.css"
   },
   "dependencies": {
     "miragejs": "^0.1.45",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.15.0"
+    "react-router-dom": "^6.15.0",
+    "sass": "^1.92.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.0.0",
