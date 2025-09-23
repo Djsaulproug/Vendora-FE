@@ -1,57 +1,76 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../contexts/AuthContext'
 
-export default function Register(){
-  
-  const [fName, setfName] = useState('')
-  const [lName, setlName] = useState('')
+export default function Register() {
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
-  const [pass, setpass] = useState('')
+  const [password, setPass] = useState('')
   const [loading, setLoading] = useState(false)
-  const { login } = useAuth()
-  const nav = useNavigate()
 
-  function submit(e){
-    e.preventDefault(); 
+  const handleSubmit = async (e) => {
+    e.preventDefault() // ✅ prevent page reload
     setLoading(true)
-    const url = '/api/v1/register'
-    const header = {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({fName, lName, email, pass})
-    }
-    fetch(url, header)
-      .then(r=>r.json())
-      .then(data=>{
-        console.log(data,'data');
-        login(data.user)
-        setLoading(false)
-        nav('/')
+
+    try {
+      const response = await fetch('http://localhost:8080/api/users/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
+        credentials: 'include' 
+      })
+
+      if (!response.ok) {
+        const errText = await response.text()
+        throw new Error(errText || 'Registration failed')
       }
-    ).catch(()=>{setLoading(false)})
+
+      const data = await response.json()
+      console.log('User registered:', data)
+      alert('User registered successfully!')
+      setName('')
+      setEmail('')
+      setPass('')
+    } catch (error) {
+      console.error('Registration error:', error)
+      alert(`Registration failed: ${error.message}`)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <div>
       <h2>Register</h2>
 
-      <form onSubmit={submit} className="card">
-
-        <label>First Name</label>
-        <input value={fName} onChange={e=>setfName(e.target.value)} placeholder="First name" />
-
-        <label>Last Name</label>
-        <input value={lName} onChange={e=>setlName(e.target.value)} placeholder="Last name" />
+      <form onSubmit={handleSubmit} className="card">
+        <label>Name</label>
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Name"
+          required
+        />
 
         <label>Email</label>
-        <input value={email} onChange={e=>setEmail(e.target.value)} placeholder="xxxx@example.com" />
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="xxxx@example.com"
+          required
+        />
 
-        <label>password</label>
-        <input value={pass} onChange={e=>setpass(e.target.value)} placeholder="password" />
+        <label>Password</label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPass(e.target.value)}
+          placeholder="Password"
+          required
+        />
 
-        <button type="submit" disabled={loading}>{loading ? 'Creating...' : 'Register'}</button>
-        
+        <button type="submit" disabled={loading}>
+          {loading ? 'Creating...' : 'Register'}
+        </button>
       </form>
     </div>
   )
